@@ -21,6 +21,7 @@ Make rat clickable, rat diappears when clicked, add 50 points
 */
 //Globals
 float top, bottom, left, right, middle;  // edges and middle of felt
+float xpos, ypos;  // x and y positions of balls
 float tableR, tableG, tableB;
 int score;
 boolean wall, rat;  
@@ -42,15 +43,17 @@ void reset(){
   left= width*8/100;        // left edge of felt
   right=width*89/100;       // right edge of felt
   middle= left + (right-left)/2;  //center of felt
+  xpos = random(middle+50, right-50);  // x position for balls
+  ypos = random(top+50, bottom-50);    // y position for balls
   tableR = 100; 
   tableG = 200;
   tableB=100;
   //Ball positions, colors and number
-  redBall= new Ball(random(middle+50, right-50),random(top+50, bottom-50), color(255,0,0), "1");
-  greenBall= new Ball(random(middle+50, right-50),random(top+50, bottom-50), color(0,255,0), "2");
-  blueBall= new Ball(random(middle+50, right-50),random(top+50, bottom-50), color(0,150,255), "3");
-  yellowBall= new Ball(random(middle+50, right-50),random(top+50, bottom-50), color(255,255,0), "4");
-  cueBall= new Ball(width/4, height*60/100, color(255), "");
+  redBall= new Ball(xpos, ypos, color(255,0,0), "1");              // Red ball
+  greenBall= new Ball(xpos+30, ypos+30, color(0,255,0), "2");      // Green ball
+  blueBall= new Ball(xpos-30, ypos-30, color(0,150,255), "3");     // Blue ball
+  yellowBall= new Ball(xpos+30, ypos-30, color(255,255,0), "4");   // Yellow ball
+  cueBall= new Ball(width/4, height*60/100, color(255), "");       // Cue ball
 
 }
 
@@ -121,6 +124,7 @@ void collisions(Ball p, Ball q){
     tmp = cueBall.cueDX;  cueBall.cueDX = q.dx;  q.dx = tmp;
     tmp = cueBall.cueDY;  cueBall.cueDY = q.dy;  q.dy = tmp;
     
+    
   }
   }
 }
@@ -128,12 +132,12 @@ void collisions(Ball p, Ball q){
 // Displays name, info, and score
 void info(){
 String name = "Justin Acosta";                                 // My name
-String title = "Project 3  CST 112 EVE";                              // Title Midterm 2
+String title = "Project 3  CST 112 EVE";                              // Title 
 String toggle= "press 'w' or click here to toggle the wall!";  // buttonWall text
 String clear= "press 'r' or click here to reset the table!";   // buttonReset text
 String rodent= "press 'm' or click here to call rat!";         // buttonRat text
 String click= "click a ball to reset its position!";           // click ball text
-String press= "press key 1, 2, or 3 to reset respective ball!";// key 1,2,3 text
+String press= "press key 1, 2, 3 or 4 to reset respective ball!";// key 1,2,3 text
   
   fill(0);
   textSize(20);
@@ -151,7 +155,7 @@ String press= "press key 1, 2, or 3 to reset respective ball!";// key 1,2,3 text
 class Ball{
   // locals for ball class
   float x, y, dx, dy;   // used for position and speed
-  float cueX, cueY, cueDX, cueDY;
+  float cueDX, cueDY;
   color c;              // used for ball color
   String number= "";    // used for the number of the ball
 // Ball Constructor
@@ -198,6 +202,10 @@ void move(){
 }
 
 void keyPressed(){
- if (key == 'w'){wall= !wall;}
- if (key == 'r'){reset();}
+ if (key == 'w'){wall= !wall;}  // w removes wall
+ if (key == 'r'){reset();}      // r resets table
+ if (key == '1'){redBall.x = xpos; redBall.y = ypos;}       // 1 resets red ball
+ if (key == '2'){greenBall.x = xpos; greenBall.y = ypos;}   // 2 resets green ball
+ if (key == '3'){blueBall.x = xpos; blueBall.y = ypos;}     // 3 resets blue ball
+ if (key == '4'){yellowBall.x = xpos; yellowBall.y = ypos;} // 4 resets yellow ball
 }
