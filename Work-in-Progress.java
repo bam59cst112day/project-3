@@ -23,19 +23,33 @@ Make rat clickable, rat diappears when clicked, add 50 points
 //String clear= "press 'r' or click here to reset the table!";   // buttonReset text
 float top, bottom, left, right, middle;  // edges and middle of felt
 float xpos, ypos;  // x and y positions of balls
-//float buttonX1, buttonY1, buttonX2, buttonY2;
-float tableR, tableG, tableB;
 int score;
-boolean wall, rat;  
-// Declaring Objects 
+int count = 0;
+boolean wall, rat, bird;  
+//Array of clouds called nimbus
+Cloud[] nimbus;  
+// pool table objects 
+Pool table;
 // 4 balls and 1 cue ball
 Ball redBall, greenBall, blueBall, yellowBall, cueBall;  
 // buttons for reset, wall, bird and rat
 Button resetButton, wallButton, birdButton, ratButton;
+// rodent global
+Rodent mouse;
+Grass g;
+Cloud c;
 
 
+
+//initial size 700, 500
 void setup(){
  size(700, 500); 
+ nimbus = new Cloud[7];
+ float cloudX = 0;  // starting postion of cloud
+ for(int i=0; i < nimbus.length; i++){  // loop to fill array nimbus
+   nimbus[i] = new Cloud( cloudX, height/4, 30, 30); // nimbus is filled with cloud objects
+   cloudX += 100;  // distance between clouds
+ }
  reset();
  
 }
@@ -44,6 +58,7 @@ void reset(){
   score = 0;
   wall = true;              // wall exists on start and reset
   rat = false;              // rat does not start on screen
+  bird = false;
   top= height*34/100;       // top edge of felt     
   bottom= height*88/100;    // bottom edge of felt
   left= width*8/100;        // left edge of felt
@@ -51,59 +66,52 @@ void reset(){
   middle= left + (right-left)/2;  //center of felt
   xpos = random(middle+50, right-50);  // x position for balls
   ypos = random(top+50, bottom-50);    // y position for balls
-  tableR = 100; 
-  tableG = 200;
-  tableB=100;
+ 
   //Ball positions, colors and number
   redBall= new Ball(xpos, ypos, color(255,0,0), "1");              // Red ball
   greenBall= new Ball(xpos+30, ypos+30, color(0,255,0), "2");      // Green ball
   blueBall= new Ball(xpos-30, ypos-30, color(0,150,255), "3");     // Blue ball
   yellowBall= new Ball(xpos+30, ypos-30, color(255,255,0), "4");   // Yellow ball
   cueBall= new Ball(width/4, height*60/100, color(255), "");       // Cue ball
-  //Button positions, colors, and text
- // resetButton= new Button(width*4/100, height*6/100, width*20/100, height*26/100, color(0), "Hi");
+//Rat
+  mouse = new Rodent(0, height*82/100, color(150));
+  
+  
 
 }
 
 
 void draw(){
   background(0, 100, 150);
-  table();
+  count += 1;
+  scene();
   action();
   info();
   showButtons();
   
 }
-// Shows Table and Wall
-void table(){
-  rectMode(CORNERS);  // rect mode is corners
-  fill(#432805);
-  rect( width*4/100, height*29/100, width*93/100, height*93/100);     //boarder
-  fill(tableR, tableG, tableB);
-  rect(left, top, right, bottom);            //felt
-
-  strokeWeight(20);                          //stroke weight of wall
-  stroke(150, 0, 255);                       // wall color
-  if (wall) {                                  //wall
-    line(middle, top + 6, middle, bottom - 6);
-    fill(0);
-    textSize(20);
-    text("W", middle - 7, height/2);         // wall text
-    text("A", middle - 7, height/2 + 30);
-    text("L", middle - 7, height/2 + 60);
-    text("L", middle - 7, height/2 + 90);
-    textSize(12);
-        
-  }
-  strokeWeight(1);                           //reset stroke weight and color
-  stroke(0);
+// Shows the scene, table, grass, clouds, rat and bird
+void scene(){
+  table = new Pool();  // table is a new Pool object
+  g = new Grass();     // g is a Grass object
+  table.show();        // show table
+  g.show();            // show grass
+  mouse.show();        // show mouse
+ 
+ for(int i=0; i < 7; i++){ // loop that goes through the nimbus array
+ nimbus[i].show();    // show clouds
+ 
+ 
+ }
 }
+
+
 // shows buttons and their text
 void showButtons(){
-  String clear= "press 'r' or click here to reset the table!";   // buttonReset text
-  String toggle= "press 'w' or click here to toggle the wall!";  // buttonWall text
-  String rodent= "press 'm' or click here to call rat!";         // buttonRat text
-  String bombs= "press 'b' or click here to call bird & bombs!"; // bird and bomb button
+  String clear= "Reset       (r)";  // buttonReset text
+  String toggle= "Wall       (w)";  // buttonWall text
+  String rodent= "Rat        (m)";  // buttonRat text
+  String bombs= "Bird        (b)";  // bird and bomb button
   float resetX1, resetX2, wallX1, wallX2, rodentX1, rodentX2, birdX1, birdX2;
   float buttonY1, buttonY2;
 //Button Positions (X1, Y1) and (X2, Y2) 
@@ -111,20 +119,21 @@ void showButtons(){
   wallX1 = width*21/100;      wallX2 = width*37/100;
   rodentX1 = width*38/100;    rodentX2 = width*54/100;
   birdX1 = width*55/100;      birdX2 = width*71/100;
-  buttonY1 = height*6/100;    buttonY2 = height*26/100;
+  buttonY1 = height*6/100;    buttonY2 = height*15/100;
   // creating 4 button objects
   resetButton= new Button(resetX1, buttonY1, resetX2, buttonY2, color(100,200,100), clear);
   wallButton= new Button(wallX1, buttonY1, wallX2, buttonY2, color(150,0,255), toggle);
   ratButton= new Button(rodentX1, buttonY1, rodentX2, buttonY2, color(150), rodent);
   birdButton= new Button(birdX1, buttonY1, birdX2, buttonY2, color(255, 0, 0), bombs);
-  // shows button by calling the button classes 'show' method
+  // shows button by calling the button class 'show' method
   resetButton.show();
   wallButton.show();
   ratButton.show();
   birdButton.show();
   
 }
-// Shows each ball, moves them, and have them collide
+
+// Shows each ball, moves them, handles collisions between each ball and rat
 void action(){
   collisions( redBall, greenBall);
   collisions( redBall, blueBall);
@@ -136,6 +145,10 @@ void action(){
   collisions( blueBall, yellowBall);
   collisions( blueBall, cueBall);
   collisions( yellowBall, cueBall);
+  ratHit( mouse, redBall);
+  ratHit( mouse, greenBall);
+  ratHit( mouse, blueBall);
+  ratHit( mouse, yellowBall);
   redBall.show();
   redBall.move();
   greenBall.show();
@@ -146,15 +159,13 @@ void action(){
   yellowBall.move();
   cueBall.show();
   cueBall.moveCue();
-  //resetButton.show();
   
   
 }
 // code to make balls collide and swap speeds
 void collisions(Ball p, Ball q){
-  
+  float tmp;
   if(dist(p.x, p.y, q.x, q.y) < 30){
-    float tmp;
     tmp = p.dx;  p.dx = q.dx;  q.dx = tmp;
     tmp = p.dy;  p.dy = q.dy;  q.dy = tmp;
     score += 1;  // score increase by 1 for each collision
@@ -165,6 +176,14 @@ void collisions(Ball p, Ball q){
     
     
   }
+  }
+}
+// Rat and Ball collisions
+void ratHit(Rodent p, Ball q){
+  if(dist(mouse.x, mouse.y, q.x, q.y) < 30){
+   q.dx = 0;
+   q.dy = 0;
+   score -= 10;
   }
 }
 
@@ -238,7 +257,7 @@ void move(){
     if (y < top + 15 || y > bottom - 15){cueDY *= -1;}
  }
 }
-
+// button class
 class Button{
   //locals for button class
   float x1, y1, x2, y2;
@@ -250,16 +269,131 @@ class Button{
   x2 = tempX2;    y2 = tempY2;
   c = tempC;      z = tempZ;
   }
+  // shows button
 void show(){
   rectMode(CORNERS);
   fill(c);
   rect(x1, y1, x2, y2);
   fill(0);
   textSize(15);
-  text(z, x1 + 10, y1, x2, y2);
+  text(z, x1 + 35, y1, x2, y2);
   textSize(12);
     
   }
+}
+// pool table class
+class Pool{
+  // shows table
+void show(){
+  rectMode(CORNERS);  // rect mode is corners
+  fill(#432805);
+  rect( width*4/100, height*29/100, width*93/100, height*93/100);     //boarder
+  fill(100, 200, 100);
+  rect(left, top, right, bottom);            //felt
+
+  strokeWeight(20);                          //stroke weight of wall
+  stroke(150, 0, 255);                       // wall color
+  if (wall) {                                  //wall
+    line(middle, top + 6, middle, bottom - 6);
+    fill(0);
+    textSize(20);
+    text("W", middle - 7, height/2);         // wall text
+    text("A", middle - 7, height/2 + 30);
+    text("L", middle - 7, height/2 + 60);
+    text("L", middle - 7, height/2 + 90);
+    textSize(12);
+        
+  }
+  strokeWeight(1);                           //reset stroke weight and color
+  stroke(0);
+}
+}
+// rodent class
+class Rodent{
+  float x, y, w, h;
+  float dx = 6;
+  color c;
+  Rodent(float tempX, float tempY, color tempC){
+    x = tempX;    y = tempY;       c = tempC;
+  }
+  // shows rat
+void show(){
+    
+
+  if (rat == true) {
+    x += dx;
+    fill(c);
+    ellipse(x, y, 50, 30);     //body
+    fill(255, 200, 200);
+    ellipse(x + 30, y - 15, 30, 10);  //nose
+    fill(c);
+    ellipse(x + 20, y - 20, 10, 30);  // ear
+    ellipse(x + 30, y - 20, 10, 30);  //ear
+    fill(255, 200, 200);
+    ellipse(x + 20, y - 20, 5, 20);  // inner ear
+    ellipse(x + 30, y - 20, 5, 20);  // inner ear
+    fill(c);
+    ellipse(x + 25, y - 15, 30, 20);  // head
+    stroke(0);
+    strokeWeight(4);
+    point(x + 23, y - 18);   //eye
+    point(x + 33, y - 18);   //eye
+    stroke(255, 200, 200);
+    line(x - 20, y - 10, x - 30, y - 30);   // tail
+
+    stroke(0); // leg color
+    if (count/30 % 2 == 0) {           //leg animation
+      line(x - 15, y + 10, x - 10, y + 25);    //legs
+      line(x + 15, y + 10, x + 10, y + 25);
+    } else {
+      line(x - 15, y + 10, x - 25, y + 25);    //legs
+      line(x + 15, y + 10, x + 25, y + 25);
+    }
+
+    if (x > width + 200) {    //rat starts again at 0 if it goes off screen
+      x = 0;
+    }
+  }else{    // if rat is true, it stays at 0
+    x = 0;
+  }
+  strokeWeight(1);
+  stroke(0);
+  
+ }
+}
+// grass class
+class Grass{
+  float y1 = height*90/100, y2 = height;  // grass y position
+  void show(){
+    for( float x = 0; x < width; x += 30){  //loop that makes grass until it hits the width
+     strokeWeight(5);
+     stroke(0,100,0);
+     line(x, y1, x, y2);
+    }
+    strokeWeight(1); // reset stroke and stroke weight
+    stroke(0);
+  }
+}
+// cloud class
+class Cloud{
+ float x, y, w, h; 
+ 
+ Cloud(float tempX, float tempY, float tempW, float tempH){
+   x = tempX;  y = tempY;
+   w = tempW;  h = tempH;
+ }
+ // shape of cloud
+ void show(){
+   noStroke();
+   fill(255);
+   ellipse(x, y, w, h);
+   ellipse(x, y - 25, w, h);
+   ellipse(x + 25, y, w, h);
+   ellipse(x + 25, y -25, w, h);
+   ellipse(x + 12, y - 15, w+50, h);
+   stroke(0);
+   x = ( x + random( 3 ) ) % width;   // move clouds randomly
+   }
 }
 
 void keyPressed(){
@@ -269,6 +403,7 @@ void keyPressed(){
  if (key == '2'){greenBall.x = xpos+30; greenBall.y = ypos+30;}   // 2 resets green ball
  if (key == '3'){blueBall.x = xpos-30; blueBall.y = ypos-30;}     // 3 resets blue ball
  if (key == '4'){yellowBall.x = xpos+30; yellowBall.y = ypos-30;} // 4 resets yellow ball
+ if (key == 'm'){rat = !rat;}
 }
 
 void mousePressed(){
@@ -287,29 +422,52 @@ void mousePressed(){
      mouseY < wallButton.y2){
        wall = !wall;
      }
+     
+   if(mouseButton == LEFT &&
+     mouseX > ratButton.x1 &&
+     mouseX < ratButton.x2 &&
+     mouseY > ratButton.y1 &&
+     mouseY < ratButton.y2){
+       rat = !rat;
+     }
+    
+   if (mouseButton == LEFT &&    // left click rat to reset it
+     (dist(mouse.x, mouse.y, mouseX, mouseY) < 50)){ 
+      mouse.x = 0;      
+      score += 50;
+} 
+     
   
   if (mouseButton == LEFT &&    // left click red ball to reset it
      (dist(redBall.x, redBall.y, mouseX, mouseY) < 50)){ 
       redBall.x = xpos;      
       redBall.y = ypos;
+      redBall.dx = random(-6,6);
+      redBall.dy = random(-6,6);
       score -= 5;
 }
   if (mouseButton == LEFT &&    // left click green ball to reset it
      (dist(greenBall.x, greenBall.y, mouseX, mouseY) < 50)){ 
       greenBall.x = xpos + 30;      
       greenBall.y = ypos + 30;
+      greenBall.dx = random(-6,6);
+      greenBall.dy = random(-6,6);
       score -= 5;
 }
   if (mouseButton == LEFT &&    // left click blue ball to reset it
      (dist(blueBall.x, blueBall.y, mouseX, mouseY) < 50)){ 
       blueBall.x = xpos - 30;      
       blueBall.y = ypos - 30;
+      blueBall.dx = random(-6,6);
+      blueBall.dy = random(-6,6);
       score -= 5;
 }
     if (mouseButton == LEFT &&    // left click yellow ball to reset it
      (dist(yellowBall.x, yellowBall.y, mouseX, mouseY) < 50)){ 
       yellowBall.x = xpos + 30;      
       yellowBall.y = ypos - 30;
+      yellowBall.dx = random(-6,6);
+      yellowBall.dy = random(-6,6);
       score -= 5;
 }
 }
