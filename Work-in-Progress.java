@@ -38,13 +38,14 @@ Button resetButton, wallButton, birdButton, ratButton;
 Rodent mouse;
 Grass g;
 Cloud c;
+Bird eagle;
 
 
 
 //initial size 700, 500
 void setup(){
  size(700, 500); 
- nimbus = new Cloud[7];
+ nimbus = new Cloud[7];  // array nimbus length is 7
  float cloudX = 0;  // starting postion of cloud
  for(int i=0; i < nimbus.length; i++){  // loop to fill array nimbus
    nimbus[i] = new Cloud( cloudX, height/4, 30, 30); // nimbus is filled with cloud objects
@@ -75,6 +76,7 @@ void reset(){
   cueBall= new Ball(width/4, height*60/100, color(255), "");       // Cue ball
 //Rat
   mouse = new Rodent(0, height*82/100, color(150));
+  eagle = new Bird(100, height*25/100, 80); 
   
   
 
@@ -97,12 +99,11 @@ void scene(){
   table.show();        // show table
   g.show();            // show grass
   mouse.show();        // show mouse
- 
- for(int i=0; i < 7; i++){ // loop that goes through the nimbus array
- nimbus[i].show();    // show clouds
- 
- 
- }
+  mouse.move();
+  // loop that goes through the nimbus array
+  for(int i=0; i < 7; i++){ nimbus[i].show(); }    // show clouds
+  eagle.show();
+  eagle.move();
 }
 
 
@@ -206,6 +207,106 @@ String press= "press key 1, 2, 3 or 4 to reset respective ball!";// key 1,2,3 te
   text(click, middle, height*96/100);       // click ball text
   text(press, middle, height*99/100);       // press 1,2,3 text
   textSize(12);  // reset text size to default
+}
+
+void keyPressed(){
+ if (key == 'w'){wall= !wall;}   // w removes wall
+ if (key == 'r'){reset();}       // r resets table
+ if (key == 'm'){rat = !rat;}    // m calls rat
+ if (key == 'b'){bird = !bird;}  // b calls bird
+ // 1 resets red ball position and speed
+ if (key == '1'){                
+   redBall.x = xpos;        redBall.dx = random(-6,6); 
+   redBall.y = ypos;        redBall.dy = random(-6,6);
+ }
+ // 2 resets green ball position and speed
+ if (key == '2'){                
+   greenBall.x = xpos+30;    greenBall.dx = random(-6,6);
+   greenBall.y = ypos+30;    greenBall.dy = random(-6,6);
+ }  
+ // 3 resets blue ball position and speed
+ if (key == '3'){               
+   blueBall.x = xpos-30;     blueBall.dx = random(-6,6);  
+   blueBall.y = ypos-30;     blueBall.dy = random(-6,6);
+ }     
+ // 4 resets yellow ball position and speed
+ if (key == '4'){
+   yellowBall.x = xpos+30;   yellowBall.dx = random(-6,6);
+   yellowBall.y = ypos-30;   yellowBall.dy = random(-6,6);
+ } 
+}
+
+void mousePressed(){
+  if(mouseButton == LEFT &&
+     mouseX > resetButton.x1 &&
+     mouseX < resetButton.x2 &&
+     mouseY > resetButton.y1 &&
+     mouseY < resetButton.y2){
+       reset();
+    }
+  
+  if(mouseButton == LEFT &&
+     mouseX > wallButton.x1 &&
+     mouseX < wallButton.x2 &&
+     mouseY > wallButton.y1 &&
+     mouseY < wallButton.y2){
+       wall = !wall;
+     }
+     
+   if(mouseButton == LEFT &&
+     mouseX > ratButton.x1 &&
+     mouseX < ratButton.x2 &&
+     mouseY > ratButton.y1 &&
+     mouseY < ratButton.y2){
+       rat = !rat;
+     }
+    if(mouseButton == LEFT &&
+     mouseX > birdButton.x1 &&
+     mouseX < birdButton.x2 &&
+     mouseY > birdButton.y1 &&
+     mouseY < birdButton.y2){
+       bird = !bird;  // Note-consider bird = true so button can also be used for bombs
+     }
+    
+   if (mouseButton == LEFT &&    // left click rat to reset it
+     (dist(mouse.x, mouse.y, mouseX, mouseY) < 50)){ 
+      mouse.x = 0;      
+      score += 50;
+} 
+     
+  
+  if (mouseButton == LEFT &&    // left click red ball to reset it
+     (dist(redBall.x, redBall.y, mouseX, mouseY) < 50)){ 
+      redBall.x = xpos;      
+      redBall.y = ypos;
+      redBall.dx = random(-6,6);
+      redBall.dy = random(-6,6);
+      score -= 5;
+}
+  if (mouseButton == LEFT &&    // left click green ball to reset it
+     (dist(greenBall.x, greenBall.y, mouseX, mouseY) < 50)){ 
+      greenBall.x = xpos + 30;      
+      greenBall.y = ypos + 30;
+      greenBall.dx = random(-6,6);
+      greenBall.dy = random(-6,6);
+      score -= 5;
+}
+  if (mouseButton == LEFT &&    // left click blue ball to reset it
+     (dist(blueBall.x, blueBall.y, mouseX, mouseY) < 50)){ 
+      blueBall.x = xpos - 30;      
+      blueBall.y = ypos - 30;
+      blueBall.dx = random(-6,6);
+      blueBall.dy = random(-6,6);
+      score -= 5;
+}
+    if (mouseButton == LEFT &&    // left click yellow ball to reset it
+     (dist(yellowBall.x, yellowBall.y, mouseX, mouseY) < 50)){ 
+      yellowBall.x = xpos + 30;      
+      yellowBall.y = ypos - 30;
+      yellowBall.dx = random(-6,6);
+      yellowBall.dy = random(-6,6);
+      score -= 5;
+}
 }
 
 // Ball class
@@ -321,7 +422,6 @@ void show(){
     
 
   if (rat == true) {
-    x += dx;
     fill(c);
     ellipse(x, y, 50, 30);     //body
     fill(255, 200, 200);
@@ -340,7 +440,6 @@ void show(){
     point(x + 33, y - 18);   //eye
     stroke(255, 200, 200);
     line(x - 20, y - 10, x - 30, y - 30);   // tail
-
     stroke(0); // leg color
     if (count/30 % 2 == 0) {           //leg animation
       line(x - 15, y + 10, x - 10, y + 25);    //legs
@@ -349,16 +448,23 @@ void show(){
       line(x - 15, y + 10, x - 25, y + 25);    //legs
       line(x + 15, y + 10, x + 25, y + 25);
     }
+  }
 
     if (x > width + 200) {    //rat starts again at 0 if it goes off screen
       x = 0;
     }
-  }else{    // if rat is true, it stays at 0
-    x = 0;
-  }
+  
   strokeWeight(1);
   stroke(0);
   
+ }
+ 
+ void move(){
+   if(rat == true){
+   x += dx; 
+   }else{
+     x = 0; // if rat is  false, it stays at 0
+   }
  }
 }
 // grass class
@@ -396,78 +502,36 @@ class Cloud{
    }
 }
 
-void keyPressed(){
- if (key == 'w'){wall= !wall;}  // w removes wall
- if (key == 'r'){reset();}      // r resets table
- if (key == '1'){redBall.x = xpos; redBall.y = ypos;}             // 1 resets red ball
- if (key == '2'){greenBall.x = xpos+30; greenBall.y = ypos+30;}   // 2 resets green ball
- if (key == '3'){blueBall.x = xpos-30; blueBall.y = ypos-30;}     // 3 resets blue ball
- if (key == '4'){yellowBall.x = xpos+30; yellowBall.y = ypos-30;} // 4 resets yellow ball
- if (key == 'm'){rat = !rat;}
+class Bird{
+ float x, y, dx = 3, dy = random(-.5,.5);
+ float w;
+ Bird(float tempX, float tempY, float tempW){
+   x = tempX;  y = tempY; w = tempW;  
+ }
+ void show(){
+  if(bird == true){
+   fill(255, 0, 0);
+   triangle(x, y, x - w, y - 20, x - w, y +10);  // bird body
+  if(count /30 % 2 == 0){   // wing animation
+    fill(255, 0, 0);
+    triangle(x - 40, y - 5, x - 60, y + 40, x - 60, y - 5);   // wing down
+  }else{
+    fill(255);
+    triangle(x - 40, y - 5, x - 60, y - 50, x - 60, y - 5);   // wing up
+  }
+  }
 }
-
-void mousePressed(){
-  if(mouseButton == LEFT &&
-     mouseX > resetButton.x1 &&
-     mouseX < resetButton.x2 &&
-     mouseY > resetButton.y1 &&
-     mouseY < resetButton.y2){
-       reset();
+  
+  void move(){
+    if(bird == true){
+      x += dx; 
+      y += dy;
+    }else{
+      x = 0;
     }
-  
-  if(mouseButton == LEFT &&
-     mouseX > wallButton.x1 &&
-     mouseX < wallButton.x2 &&
-     mouseY > wallButton.y1 &&
-     mouseY < wallButton.y2){
-       wall = !wall;
-     }
-     
-   if(mouseButton == LEFT &&
-     mouseX > ratButton.x1 &&
-     mouseX < ratButton.x2 &&
-     mouseY > ratButton.y1 &&
-     mouseY < ratButton.y2){
-       rat = !rat;
-     }
-    
-   if (mouseButton == LEFT &&    // left click rat to reset it
-     (dist(mouse.x, mouse.y, mouseX, mouseY) < 50)){ 
-      mouse.x = 0;      
-      score += 50;
-} 
-     
-  
-  if (mouseButton == LEFT &&    // left click red ball to reset it
-     (dist(redBall.x, redBall.y, mouseX, mouseY) < 50)){ 
-      redBall.x = xpos;      
-      redBall.y = ypos;
-      redBall.dx = random(-6,6);
-      redBall.dy = random(-6,6);
-      score -= 5;
-}
-  if (mouseButton == LEFT &&    // left click green ball to reset it
-     (dist(greenBall.x, greenBall.y, mouseX, mouseY) < 50)){ 
-      greenBall.x = xpos + 30;      
-      greenBall.y = ypos + 30;
-      greenBall.dx = random(-6,6);
-      greenBall.dy = random(-6,6);
-      score -= 5;
-}
-  if (mouseButton == LEFT &&    // left click blue ball to reset it
-     (dist(blueBall.x, blueBall.y, mouseX, mouseY) < 50)){ 
-      blueBall.x = xpos - 30;      
-      blueBall.y = ypos - 30;
-      blueBall.dx = random(-6,6);
-      blueBall.dy = random(-6,6);
-      score -= 5;
-}
-    if (mouseButton == LEFT &&    // left click yellow ball to reset it
-     (dist(yellowBall.x, yellowBall.y, mouseX, mouseY) < 50)){ 
-      yellowBall.x = xpos + 30;      
-      yellowBall.y = ypos - 30;
-      yellowBall.dx = random(-6,6);
-      yellowBall.dy = random(-6,6);
-      score -= 5;
-}
-}
+  if(x > width + 200) { x = 0; }
+  if(y < height*20/100 || y > top - 30){ dy *= -1;}
+  }
+ }
+
+
