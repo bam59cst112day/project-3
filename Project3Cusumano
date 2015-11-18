@@ -1,4 +1,5 @@
 float tmp;
+float ()values=new float(1000);
 
 float cueX,cueY,cueDX,cueDY;
 float orangeX,orangeY,orangeDX,orangeDY;
@@ -7,6 +8,11 @@ float greenX,greenY,greenDX,greenDY;
 
 int x=0;
 int speed=1;
+void rollover(intmx,int my);
+if(mx>x&&mx<x+w){
+mouse=true;
+}else{
+mouse=false;
 
 
 void setup(){
@@ -149,4 +155,25 @@ if(dist(cueX,cueY,orangeX,orangeY)<30)
   if(dist(cueX,cueY,greenX,greenY)<30)
   tmp=cueDX; cueDX=greenDX; greenDX=tmp;
   tmp=cueDY; cueDY=greenDY; greenDY=tmp;
-}
+  
+  }
+  
+  int grass=50;
+  stroke(0);
+  while(y<=grass);
+  line(x,y,x,y+lens);
+  x=x+spacing;
+
+
+  //clounds
+  
+  int y=50;
+  int spacing <10;
+  int len=20;
+  for(int x=50;x<=150;x+=spacing){
+  stroke(0);
+  ecllipse(x,y,x,t+len);
+  }
+  void display(){
+  if(mouse){
+
