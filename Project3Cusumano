@@ -1,3 +1,10 @@
+////  https://github.com/Cusut56/project-3/edit/master/Project3Cusumano
+
+////  ????? WHO WROTE THIS?  ////
+////  (Please start with comments that say WHO you are and WHAT you are trying to do!)
+
+
+
 float tmp;
 float left,right,top,bottom;
 float middle;
@@ -59,17 +66,30 @@ void reset(){
     
     if((cueDX>width)|| (cueDX<30)){
 speed=speed*-1;
-    
+         //BAM:  the above line should be INDENTED. //
+
+    }  /*BAM added this line.*/
+
+
   if ((orangeDX < width) || (orangeDX>30)){
 speed = speed * -1;
+         //BAM:  the above line should be INDENTED. //
   }
   
+         //BAM:  the following lines are not INDENTED properly! //
 if((purpleDX> width)||(purpleDX<30)){
 speed=speed*-1;
 }
 
 if((greenDX>width)|| (greenDX<30)){
 speed=speed*-1;
+
+
+    }  /*BAM added this line.*/
+
+
+         //BAM:  the following lines are not INDENTED properly! //
+
 if((redDX>width)||(redDX<30)){
   speed=speed*-1;
 }
@@ -77,9 +97,11 @@ if((redDX>width)||(redDX<30)){
   
   background(255,255,200); 
   rectMode(CORNERS);
+    //BAM:  the following lines are INDENTED unnecessarily! //
     fill(50,205,50);
     strokeWeight(10);
     stroke(126,98,75);
+       //BAM:  the following line is INDENTED unnecessarily! //
        rect (left+40,top+20,right+20,bottom+20);
        
    
@@ -88,12 +110,21 @@ if((redDX>width)||(redDX<30)){
     collision();
     
     
+//BAM removed this line.//    stroke(0,127,0);}
+/*BAM added this line.*/      stroke(0,127,0); 
 
-  stroke(0,127,0);}
-  line(middle,top+20,middle,bottom+10);}
-  
-  
+//BAM removed this line.//    line(middle,top+20,middle,bottom+10);}
+/*BAM added this line.*/      line(middle,top+20,middle,bottom+10);  
 
+  
+//BAM:  Your bird() method was never called! 
+/*BAM added this line.*/      bird();
+
+/*BAM added this line.*/      text( "WHO WROTE THIS???", 10,height-30 );
+/*BAM added this line.*/      text( "(Please display your name on screen!)", 10,height-10 );
+
+
+/*BAM added this line.*/      fill(255,0,255); text( "Cusut56/project-3", width/2,height-10 );
   
 
   }
@@ -106,10 +137,14 @@ void bounce(){
  purpleY+=purpleDY; if((purpleY<top)||(purpleY>bottom)) 
  purpleDY*=-1;    
 ;
+//BAM:  The above semicolon (;) is unnecessary! //
+//BAM:  Stuff like this makes me doubt your understanding of the code you wrote. //
 
   greenX+=greenDX;  if((greenX<left)||(greenX>right))
   greenDX*=-1; 
   ;
+  //BAM:  The above semicolon (;) is unnecessary! //
+  //BAM:  Stuff like this makes me doubt your understanding of the code you are submitting. //
   orangeY+=orangeDY; if((orangeY<top)||(orangeY>bottom)) 
   orangeDY*=-1;    
     ;
@@ -194,7 +229,14 @@ if(dist(cueX,cueY,orangeX,orangeY)<40);
 }
 void bird(){
   if(birdx>width);
-  birdx=0;birdmove=false;
+  //BAM:  The above line makes no sense.  (It tests but does nothing!)
+  
+  //BAM removed this line.//      birdx=0;birdmove=false;
+  /*BAM added this line.*/        if(birdx>width) {  birdx=0;  }
+
+  
+
+
   fill(0);
   ellipse(birdx,+100,35,15);
   ellipse(birdy+10,80,15,15);
