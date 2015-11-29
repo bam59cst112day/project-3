@@ -5,9 +5,13 @@ float cueX,cueY,cueDX,cueDY;
 float orangeX,orangeY,orangeDX,orangeDY;
 float purpleX,purpleY,purpleDX,purpleDY;
 float greenX,greenY,greenDX,greenDY;
-
+float redX,redY,redDX,redDY;
+float birdx=0;
+float birdy=100;
+boolean birdmove=false;
 int x=0;
 int speed=1;
+ int count=0;
 
 
 void setup(){
@@ -30,19 +34,23 @@ void reset(){
   purpleY=top+(bottom-top)/2;
   greenX=left+(right-left)/2;
   greenY=top+(bottom-top)/2;
+  redX=left+(right-left)/2;
+  redY=top+(bottom-top)/2;
   ;
   //random positions
   cueX=random(middle,right); cueY=random(left,bottom);{
   orangeX=random(middle,right); orangeY=random(left,bottom);
  purpleX=random(middle,right); purpleY=random(top,bottom);
  greenX=random(middle,right); greenY=random(top,bottom);
+ redX=random(middle,right); redY=random(top,bottom);
   }
   
   //random speed
   cueDX=random(1,3); cueDY=random(1,3);{
  orangeDX= random(1,3); orangeDY=random(1,3);
   purpleDX=random(1,3); purpleDY=random(1,3);
-  greenDX=random(1,3); greenDY=random(1,3);}
+  greenDX=random(1,3); greenDY=random(1,3);
+  redDX=random(1,3); redDY=random(1,3);}
 }
 
 
@@ -62,6 +70,8 @@ speed=speed*-1;
 
 if((greenDX>width)|| (greenDX<30)){
 speed=speed*-1;
+if((redDX>width)||(redDX<30)){
+  speed=speed*-1;
 }
 
   
@@ -79,10 +89,8 @@ speed=speed*-1;
     
     
 
-  stroke(0,127,0);
-  line(middle,top+20,middle,bottom+10);
-  }
-  
+  stroke(0,127,0);}
+  line(middle,top+20,middle,bottom+10);}
   
   
 
@@ -92,20 +100,22 @@ speed=speed*-1;
 void bounce(){
   
   
- cueX+=cueDX; if((cueX<left) ||(cueX>right)) 
- cueDX*=-1;
-    
+ cueY+=cueDY; if((cueY<left) ||(cueY>right)) 
+ cueDY*=-1; 
+ ;
+ purpleY+=purpleDY; if((purpleY<top)||(purpleY>bottom)) 
+ purpleDY*=-1;    
+;
 
-purpleY+=purpleDY; if((purpleY<top)||(purpleY>bottom)) 
-purpleDY*=-1;    ;
-  
   greenX+=greenDX;  if((greenX<left)||(greenX>right))
   greenDX*=-1; 
   ;
-
-    orangeX+=orangeDX; if((orangeX<top)||(orangeX>bottom)) 
-    orangeDX*=-1;    
-    
+  orangeY+=orangeDY; if((orangeY<top)||(orangeY>bottom)) 
+  orangeDY*=-1;    
+    ;
+  redX+=redDX; if((redX<left)||(redX>right))
+  redDX*=-1;
+  ;
      
     
 
@@ -113,44 +123,84 @@ purpleDY*=-1;    ;
 
 //show balls
 void show(){
-  noStroke();
-  fill(255);        ellipse(cueX,cueY,30,30);  
+  noStroke(); 
+  fill(255);        ellipse(cueX,cueY,30,30);       fill(0); text("4",cueX-5,cueY+3);
   fill(204,110,0);  ellipse(orangeX,orangeY,30,30); fill (0);text("1",orangeX-5,orangeY+3);
   
   fill(90,80,250);  ellipse(purpleX,purpleY,30,30); fill(0); text("2",purpleX-5,purpleY+3);
   
   fill(50,200,0);   ellipse(greenX,greenY,30,30);  fill(0); text("3",greenX-5,greenY+3);
+  fill(240,25,250); ellipse(redX,redY,30,30);      fill(0); text("5",redX-5,redY+3);
 }
+
 
 
 //collision
 void collision(){
 
-if (dist(orangeX,orangeY,purpleX,purpleY)<30);
+if (dist(orangeX,orangeY,purpleX,purpleY)<40);
 float tmp;
 tmp=orangeDX; orangeDX=purpleDX; purpleDX=tmp;
 tmp=orangeDY; orangeDY=purpleDY; purpleDY=tmp;
 ;
 
-if(dist(greenX,greenY,purpleX,purpleY)<30)
+if(dist(greenX,greenY,purpleX,purpleY)<40);
+
   tmp=greenDX; greenDX=purpleDX; purpleDX=tmp;
   tmp=greenDY; greenDY=purpleDY; purpleDY=tmp;
 ;
 
-if(dist(orangeX,orangeY,greenX,greenY)<30)
+if(dist(orangeX,orangeY,greenX,greenY)<40);
+
   tmp=orangeDX; orangeDX=greenDX; greenDX=tmp;
   tmp=orangeDY; orangeDY=greenDY; greenDY=tmp;
 ;
 
-if(dist(cueX,cueY,orangeX,orangeY)<30)
+if(dist(cueX,cueY,orangeX,orangeY)<40);
+
   tmp=cueDX; cueDX=orangeDX; orangeDX=tmp;
   tmp=cueDY; cueDY=orangeDY; orangeDY=tmp;
   ;
-  if(dist(cueX,cueY,purpleX,purpleY)<30)
+ if(dist(cueX,cueY,purpleX,purpleY)<40);
+ 
   tmp=cueDX; cueDX=purpleDX;purpleDX=tmp;
   tmp=cueDY; cueDY=purpleDY;purpleDY=tmp;
   ;
-  if(dist(cueX,cueY,greenX,greenY)<30)
+  if(dist(cueX,cueY,greenX,greenY)<30);
+  
   tmp=cueDX; cueDX=greenDX; greenDX=tmp;
   tmp=cueDY; cueDY=greenDY; greenDY=tmp;
+  ;
+  if(dist(redX,redY,greenX,greenY)<40);
+  
+  tmp= redDX;redDX=greenDX; greenDX=tmp;
+  tmp=redDY;cueDY=greenDY;greenDY=tmp;
+  ;
+  if(dist(redX,redY,purpleX,purpleY)<40);
+  
+  tmp=redDX; redDX=purpleDX;purpleDX=tmp;
+  tmp=redDY; redDY=purpleDY;purpleDY=tmp;
+  ;
+  if(dist(redX,redY,orangeX,orangeY)<40);
+  
+  tmp=redDX; redDX=orangeDX; orangeDX=tmp;
+  tmp=redDY; redDY=orangeDY; orangeDY=tmp;
+    ;
+  if(dist(redX,redY,cueX,cueY)<40);
+    
+   tmp=redDX;redDX=cueDX; cueDX=tmp;
+    tmp=redDY;redDY=cueDY;cueDY=tmp;
+    ;
 }
+void bird(){
+  if(birdx>width);
+  birdx=0;birdmove=false;
+  fill(0);
+  ellipse(birdx,+100,35,15);
+  ellipse(birdy+10,80,15,15);
+  if(count/30 % 2==0){
+    triangle (birdy-20,90,birdx,80,birdx+10,10);}
+    else{
+      triangle(birdx-10,100,birdx,120,birdx+10,100);}
+    birdx+=4;
+  }
