@@ -1,6 +1,8 @@
 // Project 3 CST 112 EVE
 // by Justin Acosta
 
+//BAM:  Nice job!  A+
+
 //Globals
 float top, bottom, left, right, middle;  // edges and middle of felt
 float xpos, ypos;                        // x and y positions of balls
